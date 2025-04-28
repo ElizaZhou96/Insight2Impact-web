@@ -1,5 +1,5 @@
-import React from 'react';
-import { Home, Smile, Users, Calendar, BookOpen, MessageCircleHeart, Mail, Globe, Github, Candy, Sprout, HandHeart, ChevronLeft, ChevronRight} from 'lucide-react';
+import React, { useState } from 'react';
+import { Home, Smile, Users, Calendar, BookOpen, MessageCircleHeart, Mail, Globe, Github, Candy, Sprout, HandHeart, ChevronLeft, ChevronRight, Menu, X } from 'lucide-react';
 import { useRef } from "react";
 
 const papers = [
@@ -18,11 +18,14 @@ const papers = [
 ];
 
 function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+    setIsMenuOpen(false);
   };
 
   return (
@@ -31,25 +34,46 @@ function App() {
       <nav className="bg-white shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
-            <div className="flex space-x-8">
-              <div className="flex items-center text-[#AF3737] font-semibold text-xl">
-                <Candy className="inline w-5 h-5 text-[#AF3737] animate-bounce mr-2" />ECAI 2025 Tutorial
-              </div>
-              <div className="hidden md:flex items-center space-x-8">
-                <NavItem icon={<Home size={18} />} text="Home" onClick={() => scrollToSection('home')} />
-                <NavItem icon={<Smile size={18} />} text="About" onClick={() => scrollToSection('about')} />
-                <NavItem icon={<Users size={18} />} text="Organizer" onClick={() => scrollToSection('organizer')} />
-                <NavItem icon={<Calendar size={18} />} text="Schedule" onClick={() => scrollToSection('schedule')} />
-                <NavItem icon={<BookOpen size={18} />} text="Reading List" onClick={() => scrollToSection('reading')} />
+            <div className="flex items-center text-[#AF3737] font-semibold text-xl">
+              <Candy className="inline w-5 h-5 text-[#AF3737] animate-bounce mr-2" />ECAI 2025 Tutorial
+            </div>
+            <div className="hidden md:flex items-center space-x-8">
+              <NavItem icon={<Home size={18} />} text="Home" onClick={() => scrollToSection('home')} />
+              <NavItem icon={<Smile size={18} />} text="About" onClick={() => scrollToSection('about')} />
+              <NavItem icon={<Users size={18} />} text="Organizer" onClick={() => scrollToSection('organizer')} />
+              <NavItem icon={<Calendar size={18} />} text="Schedule" onClick={() => scrollToSection('schedule')} />
+              <NavItem icon={<BookOpen size={18} />} text="Reading List" onClick={() => scrollToSection('reading')} />
+            </div>
+            <div className="flex items-center space-x-4">
+              <a href="https://ecai2025.org/" target="_blank" rel="noopener noreferrer" className="flex-shrink-0">
+                <img
+                  src="https://ecai2025.org/wp-content/uploads/2023/09/logo.png"
+                  className="w-21 h-8 object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
+                  alt="ECAI 2025 Logo"
+                />
+              </a>
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="block md:hidden p-2 text-[#AF3737] hover:text-[#E8B6B6] transition-colors duration-200"
+                aria-label="Toggle menu"
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Navigation Menu */}
+          {isMenuOpen && (
+            <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
+              <div className="px-4 py-2 space-y-1">
+                <MobileNavItem icon={<Home size={18} />} text="Home" onClick={() => scrollToSection('home')} />
+                <MobileNavItem icon={<Smile size={18} />} text="About" onClick={() => scrollToSection('about')} />
+                <MobileNavItem icon={<Users size={18} />} text="Organizer" onClick={() => scrollToSection('organizer')} />
+                <MobileNavItem icon={<Calendar size={18} />} text="Schedule" onClick={() => scrollToSection('schedule')} />
+                <MobileNavItem icon={<BookOpen size={18} />} text="Reading List" onClick={() => scrollToSection('reading')} />
               </div>
             </div>
-            <a href="https://ecai2025.org/" target="_blank" rel="noopener noreferrer">
-      <img
-        src="https://ecai2025.org/wp-content/uploads/2023/09/logo.png"
-        className="w-21 h-8 object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
-      />
-    </a>
-          </div>
+          )}
         </div>
       </nav>
 
@@ -238,24 +262,9 @@ function App() {
             Reading List
           </h2>
           <ReadingListSlider />
-          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <ReadingCard
-              title="Attention Is All You Need"
-              authors="Vaswani et al."
-              year="2017"
-              link="https://arxiv.org/abs/1706.03762"
-            />
-            <ReadingCard
-              title="BERT: Pre-training of Deep Bidirectional Transformers"
-              authors="Devlin et al."
-              year="2018"
-              link="https://arxiv.org/abs/1810.04805"
-            />
-          </div> */}
         </div>
       </section>
 
-      
       {/* Footer with Copyright */}
       <footer className="bg-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -274,6 +283,18 @@ function NavItem({ icon, text, onClick }: { icon: React.ReactNode; text: string;
     <button
       onClick={onClick}
       className="flex items-center space-x-1 text-gray-700 hover:text-[#AF3737] transition-colors duration-200"
+    >
+      {icon}
+      <span>{text}</span>
+    </button>
+  );
+}
+
+function MobileNavItem({ icon, text, onClick }: { icon: React.ReactNode; text: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center space-x-2 w-full px-3 py-2 text-gray-700 hover:text-[#AF3737] hover:bg-gray-50 rounded-md transition-colors duration-200"
     >
       {icon}
       <span>{text}</span>
@@ -352,32 +373,6 @@ function ScheduleItem({
   );
 }
 
-function ReadingCard({
-  title, 
-  authors,
-  year,
-  link,
-}: {
-  title: string;
-  authors: string;
-  year: string;
-  link: string;
-}) {
-  return (
-    <div className="bg-white rounded-lg p-6 transform transition duration-300 hover:scale-[1.02] hover:shadow-lg">
-      <h3 className="text-lg font-semibold text-[#AF3737] mb-2">{title}</h3>
-      <p className="text-gray-600 mb-2">{authors}</p>
-      <p className="text-gray-500 text-sm mb-4">{year}</p>
-      <a
-        href={link}
-        className="text-[#AF3737] hover:text-[#E8B6B6] transition-colors duration-200"
-      >
-        Read Paper →
-      </a>
-    </div>
-  );
-}
-
 function ReadingListSlider() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -423,4 +418,32 @@ function ReadingListSlider() {
   );
 }
 
+function ReadingCard({
+  title,
+  authors,
+  year,
+  link,
+}: {
+  title: string;
+  authors: string;
+  year: string;
+  link: string;
+}) {
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h3 className="text-lg font-semibold text-[#AF3737] mb-2">{title}</h3>
+      <p className="text-gray-600 mb-2">{authors}</p>
+      <p className="text-gray-500 text-sm mb-4">{year}</p>
+      <a
+        href={link}
+        className="text-[#AF3737] hover:text-[#E8B6B6] transition-colors duration-200"
+      >
+        Read Paper →
+      </a>
+    </div>
+  );
+}
+
 export default App;
+
+export default App
